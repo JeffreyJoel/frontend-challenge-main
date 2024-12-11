@@ -20,7 +20,7 @@ export const MainLayout: FunctionComponent<
     <NavBar/>
     <main
       className={classNames(
-        inter.className
+        inter.className, "pt-24"
       )}
     >
       {children}
