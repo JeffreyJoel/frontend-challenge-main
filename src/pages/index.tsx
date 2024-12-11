@@ -1,8 +1,8 @@
-import { MainLayout } from "@/layouts/MainLayout";
+import { Profile } from "@/components/Profile";
 import { NextPage } from "next";
 
 const Home: NextPage = () => {
-  return <MainLayout />;
+  return <Profile />;
 };
 
 export default Home;
