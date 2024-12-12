@@ -6,14 +6,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useERC20Token } from "@/hooks/useTokenInteractions";
 import { useEffect, useState } from "react";
-import { useAppKitAccount } from "@reown/appkit/react";
+import { useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import TokenTransactionsTable from "@/components/token-interaction/TokenTransactions";
+import Link from "next/link";
 
 const TokenInteraction: NextPage = () => {
   const tokenAddress = "0x036CbD53842c5426634e7929541eC2318f3dCF7e"; // usdc on base
   const { isConnected, address } = useAppKitAccount();
+  const { chainId } = useAppKitNetwork();
   const {
     getTokenInfo,
     getBalanceOf,
@@ -56,8 +58,8 @@ const TokenInteraction: NextPage = () => {
       fetchBalance();
       fetchTotalSupply();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, address]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected, address, chainId]);
 
   const handleTransfer = async () => {
     const tx = await transfer(recipient, amount);
@@ -77,97 +79,127 @@ const TokenInteraction: NextPage = () => {
   return (
     <div className="min-h-screen bg-black text-white p-8">
       {isConnected ? (
-        <div className="max-w-6xl mx-auto space-y-8">
-          {/* Header Section */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold">Token Name: {name}</h1>
+        chainId === 84532 ? (
+          <div className="max-w-6xl mx-auto space-y-8">
+            {/* Header Section */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <h1 className="text-2xl font-bold">Token Name: {name}</h1>
+              </div>
             </div>
-          </div>
 
-          {/* Token Details Section */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Token Details</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card className=" border-gray-800">
-                <CardContent className="pt-6">
-                  <div className="space-y-1">
-                    <p className="text-gray-400">Total Supply</p>
-                    <p className="text-xl">
-                      {totalSupply} {symbol}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className=" border-gray-800">
-                <CardContent className="pt-6">
-                  <div className="space-y-1">
-                    <p className="text-gray-400">Owned by you</p>
-                    <p className="text-xl">
-                      {userBalance} {symbol}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className=" border-gray-800">
-                <CardContent className="pt-6">
-                  <div className="space-y-1">
-                    <p className="text-gray-400">Decimals</p>
-                    <p className="text-xl">6</p>
-                  </div>
-                </CardContent>
-              </Card>
+            {/* Token Details Section */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold">Token Details</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card className=" border-gray-800">
+                  <CardContent className="pt-6">
+                    <div className="space-y-1">
+                      <p className="text-gray-400">Total Supply</p>
+                      <p className="text-xl">
+                        {totalSupply} {symbol}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className=" border-gray-800">
+                  <CardContent className="pt-6">
+                    <div className="space-y-1">
+                      <p className="text-gray-400">Owned by you</p>
+                      <p className="text-xl">
+                        {userBalance} {symbol}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className=" border-gray-800">
+                  <CardContent className="pt-6">
+                    <div className="space-y-1">
+                      <p className="text-gray-400">Decimals</p>
+                      <p className="text-xl">6</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
-          </div>
 
-          <div className="space-y-4 grid  md:grid-cols-5 gap-24">
-            <div className="mt-8 md:col-span-2">
-              <h2 className="text-xl mb-8 font-semibold">Actions</h2>
-              <div className="flex flex-col gap-4">
-                <Label className="text-sm font-medium text-gray-200">
-                  Recipient
-                </Label>
-                <Input
-                  type="text"
-                  placeholder="Recipient Address"
-                  value={recipient}
-                  onChange={(e) => setRecipient(e.target.value)}
-                  className="px-4 py-2 rounded border border-gray-700 text-white"
-                />
-                <Label className="text-sm font-medium text-gray-200">
-                  Amount
-                </Label>
-                <Input
-                  type="text"
-                  placeholder="Amount"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="px-4 py-2 rounded border border-gray-700 text-white"
-                />
-                <div className="flex gap-4">
-                  <Button onClick={handleTransfer} disabled={loading}>
-                    Transfer
-                  </Button>
-                  <Button onClick={handleApprove} disabled={loading}>
-                    Approve
-                  </Button>
+            <div className="space-y-4 grid  md:grid-cols-5 gap-24">
+              <div className="mt-8 md:col-span-2">
+                <h2 className="text-xl mb-8 font-semibold">Actions</h2>
+                <div className="flex flex-col gap-4">
+                  <Label className="text-sm font-medium text-gray-200">
+                    Recipient
+                  </Label>
+                  <Input
+                    type="text"
+                    placeholder="Recipient Address"
+                    value={recipient}
+                    onChange={(e) => setRecipient(e.target.value)}
+                    className="px-4 py-2 rounded border border-gray-700 text-white"
+                  />
+                  <Label className="text-sm font-medium text-gray-200">
+                    Amount
+                  </Label>
+                  <Input
+                    type="text"
+                    placeholder="Amount"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="px-4 py-2 rounded border border-gray-700 text-white"
+                  />
+                  <div className="flex gap-4">
+                    <Button onClick={handleTransfer} disabled={loading}>
+                      Transfer
+                    </Button>
+                    <Button onClick={handleApprove} disabled={loading}>
+                      Approve
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 md:col-span-3">
+                <h2 className="text-xl font-semibold">Transactions</h2>
+                <div className="mt-8">
+                  <TokenTransactionsTable
+                    tokenAddress={tokenAddress}
+                    userAddress={address}
+                  />
                 </div>
               </div>
             </div>
-
-            <div className="mt-8 md:col-span-3">
-              <h2 className="text-xl font-semibold">Transactions</h2>
-              <div className="mt-8">
-                <TokenTransactionsTable tokenAddress={tokenAddress} userAddress={address} />
-              </div>
-            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex flex-col mt-12 items-center justify-center">
+            <p className="text-gray-400 text-lg">
+              This section interacts with the USDC token deployed on Base
+              Sepolia.
+            </p>
+            <p className="text-gray-400 text-lg mt-4">
+              Please ensure you are connected to Base Sepolia
+            </p>
+          </div>
+        )
       ) : (
         <div className="flex flex-col mt-12 items-center justify-center">
           <p className="text-gray-400 text-lg">
-            Please connect your wallet to view this page.
+            This section interacts with the USDC token deployed on Base Sepolia.
           </p>
+          <p className="text-gray-400 text-lg mt-4">
+            The following will help you maximise your experience on the app
+          </p>
+          <ul className=" list-decimal mt-2">
+            <li>Connect your wallet to interact with the token</li>
+            <li>
+              Get some USDC on base sepolia{" "}
+              <Link
+                className=" underline text-blue-500"
+                href="https://faucet.circle.com/"
+              >
+                https://faucet.circle.com/
+              </Link>
+            </li>
+          </ul>
         </div>
       )}
     </div>
